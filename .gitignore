@@ -1,0 +1,43 @@
+# AWS AgentCore samples — clone separately, not tracked here
+agentcore-samples/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+
+# CDK
+cdk.out/
+cdk.context.json
+
+# AgentCore CLI local state (all per-machine)
+**/.cli/
+**/.cache/
+
+# Secrets and local env
+.env
+.env.local
+**/.env.local
+*.pem
+*.key
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

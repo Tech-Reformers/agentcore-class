@@ -13,7 +13,7 @@ python standard-usage.py sdk
 
 `sdk` uses the AgentCore Python SDK (recommended). `boto3` shows the raw API for contrast — run it too if you want to compare surfaces.
 
-Takes ~30 sec (memory resource has to become ACTIVE).
+Takes 30 sec to 2 min — the memory resource has to reach ACTIVE state and the SDK polls silently while it does. If it feels stuck, it's working. Use the wait time to walk the code.
 
 ## Point at in the code (`standard-usage.py`, `run_with_sdk` function)
 

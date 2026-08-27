@@ -4,12 +4,14 @@
 
 ## Run it
 
+Prereqs: venv activated, `AWS_PROFILE` set, SSO logged in (see `00-instructor-prep.md`).
+
 ```bash
 cd /Users/johnkrull/Projects/agentcore-samples/agentcore-samples/01-features/05-authenticate-and-authorize/01-inbound-auth/01-inbound-auth-cognito
-python inbound_auth_runtime.py
+python3 inbound_auth_runtime.py
 ```
 
-Deploy takes ~3 min.
+The script has no `--profile` flag — it reads `AWS_PROFILE` from the environment. Deploy takes ~3 min.
 
 ## Point at in the code (while it deploys)
 

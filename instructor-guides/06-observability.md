@@ -8,8 +8,17 @@ Three parts: **built-in traces** (free, no code) + **custom spans** (enrich the 
 
 The Module 2 agent is already emitting traces. Show them.
 
+**Mac:**
 ```bash
 cd /Users/johnkrull/Projects/agentcore-samples/CustomerSupport
+agentcore invoke "Tell me about product PROD-002" --stream
+agentcore invoke "What's the return policy for electronics?" --stream
+agentcore traces list --limit 5
+```
+
+**Windows (Git Bash):**
+```bash
+cd /d/Projects/agentcore-class/CustomerSupport
 agentcore invoke "Tell me about product PROD-002" --stream
 agentcore invoke "What's the return policy for electronics?" --stream
 agentcore traces list --limit 5
@@ -28,8 +37,17 @@ Say: "You wrote zero telemetry code. ADOT auto-instrumented every Bedrock call a
 
 **Sample**: `01-features/06-observe-evaluate-optimize-your-agent/01-observe/custom_span_creation.py`
 
+**Mac:**
 ```bash
 cd /Users/johnkrull/Projects/agentcore-samples/agentcore-samples/01-features/06-observe-evaluate-optimize-your-agent/01-observe
+cp .env.example .env
+# edit .env if needed
+opentelemetry-instrument python custom_span_creation.py --session-id "class-demo"
+```
+
+**Windows (Git Bash):**
+```bash
+cd /d/Projects/agentcore-class/agentcore-samples/01-features/06-observe-evaluate-optimize-your-agent/01-observe
 cp .env.example .env
 # edit .env if needed
 opentelemetry-instrument python custom_span_creation.py --session-id "class-demo"
@@ -59,8 +77,17 @@ Compare two traces side by side in CloudWatch:
 AgentCore ships 13 built-in evaluators (Correctness, Helpfulness, ToolSelectionAccuracy, GoalSuccessRate, Refusal, Harmfulness, etc.). Score any trace with one CLI command — no code, no separate deploy.
 
 **Get a recent session ID** (from your Part 1 invocations):
+
+**Mac:**
 ```bash
 cd /Users/johnkrull/Projects/agentcore-samples/CustomerSupport
+agentcore traces list --limit 5
+# copy a session-id from the output
+```
+
+**Windows (Git Bash):**
+```bash
+cd /d/Projects/agentcore-class/CustomerSupport
 agentcore traces list --limit 5
 # copy a session-id from the output
 ```

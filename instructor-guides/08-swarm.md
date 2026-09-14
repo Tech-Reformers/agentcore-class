@@ -46,9 +46,17 @@ print(f"Node history: {[node.node_id for node in result.node_history]}")
 
 ## Run it
 
+**Mac:**
 ```bash
 export AWS_PROFILE=jkdemo
 source /Users/johnkrull/Projects/agentcore-samples/agentcore-samples/.venv/bin/activate
+python swarm_demo.py
+```
+
+**Windows (Git Bash):**
+```bash
+export AWS_PROFILE=jkdemo
+source /d/Projects/agentcore-class/agentcore-samples/.venv/Scripts/activate
 python swarm_demo.py
 ```
 

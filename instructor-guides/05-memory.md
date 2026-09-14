@@ -6,8 +6,15 @@ Short-term memory = raw conversation turns scoped to `actorId` + `sessionId`. No
 
 ## Run it
 
+**Mac:**
 ```bash
 cd /Users/johnkrull/Projects/agentcore-samples/agentcore-samples/01-features/04-manage-context-of-your-agent/memory/01-short-term-memory
+python standard-usage.py sdk
+```
+
+**Windows (Git Bash):**
+```bash
+cd /d/Projects/agentcore-class/agentcore-samples/01-features/04-manage-context-of-your-agent/memory/01-short-term-memory
 python standard-usage.py sdk
 ```
 

@@ -36,6 +36,24 @@
           ]
         }
       ]
+    },
+    {
+      "name": "MyMemoryCS",
+      "eventExpiryDuration": 30,
+      "strategies": [
+        {
+          "type": "SUMMARIZATION",
+          "namespaceTemplates": [
+            "/summaries/{actorId}/{sessionId}"
+          ]
+        },
+        {
+          "type": "USER_PREFERENCE",
+          "namespaceTemplates": [
+            "/users/{actorId}/preferences"
+          ]
+        }
+      ]
     }
   ],
   "knowledgeBases": [],

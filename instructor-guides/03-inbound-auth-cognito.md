@@ -4,8 +4,15 @@
 
 ## Run it
 
+**Mac:**
 ```bash
 cd /Users/johnkrull/Projects/agentcore-samples/agentcore-samples/01-features/05-authenticate-and-authorize/01-inbound-auth/01-inbound-auth-cognito
+python inbound_auth_runtime.py
+```
+
+**Windows (Git Bash):**
+```bash
+cd /d/Projects/agentcore-class/agentcore-samples/01-features/05-authenticate-and-authorize/01-inbound-auth/01-inbound-auth-cognito
 python inbound_auth_runtime.py
 ```
 

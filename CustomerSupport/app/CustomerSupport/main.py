@@ -1,4 +1,5 @@
 from strands import Agent, tool
+from strands.handlers.callback_handler import null_callback_handler
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 from model.load import load_model
 
@@ -111,6 +112,7 @@ def get_or_create_agent():
             model=load_model(),
             system_prompt=SYSTEM_PROMPT,
             tools=[get_return_policy, get_product_info],
+            callback_handler=null_callback_handler,
         )
     return _agent
 

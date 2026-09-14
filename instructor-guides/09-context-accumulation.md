@@ -1,13 +1,22 @@
 # Lab (Module 9) — Watching Context Fill Up
 
-**Project**: `/Users/johnkrull/Projects/agentcore-samples/CustomerSupport/` (the M2 agent, reused)
+**Project**: `CustomerSupport/` (the M2 agent, reused)
+  - Mac: `/Users/johnkrull/Projects/agentcore-samples/CustomerSupport/`
+  - Windows (Git Bash, class PC): `/d/Projects/agentcore-class/CustomerSupport/`
 
 Show attendees that an agent "remembers" the conversation within a session — and prove it by watching the model's input grow between turns. No memory service, no new code. Just visible proof of what Strands is doing behind the scenes.
 
 ## Run it
 
+**Mac:**
 ```bash
 cd /Users/johnkrull/Projects/agentcore-samples/CustomerSupport
+agentcore dev
+```
+
+**Windows (Git Bash):**
+```bash
+cd /d/Projects/agentcore-class/CustomerSupport
 agentcore dev
 ```
 

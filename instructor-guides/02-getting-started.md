@@ -1,14 +1,23 @@
 # Lab (Module 2) — Getting Started with AgentCore CLI
 
-**Project**: `/Users/johnkrull/Projects/agentcore-samples/CustomerSupport/`
+**Project**: `CustomerSupport/` at the repo root
+  - Mac: `/Users/johnkrull/Projects/agentcore-samples/CustomerSupport/`
+  - Windows (Git Bash, class PC): `/d/Projects/agentcore-class/CustomerSupport/`
 **Sample source**: `agentcore-samples/00-getting-started/`
 
 No reset needed between classes. `agentcore deploy` updates the existing stack in place.
 
 ## Run it locally
 
+**Mac:**
 ```bash
 cd /Users/johnkrull/Projects/agentcore-samples/CustomerSupport
+agentcore dev
+```
+
+**Windows (Git Bash):**
+```bash
+cd /d/Projects/agentcore-class/CustomerSupport
 agentcore dev
 ```
 

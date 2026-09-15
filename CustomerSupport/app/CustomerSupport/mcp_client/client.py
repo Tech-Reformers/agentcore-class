@@ -5,10 +5,10 @@ from strands.tools.mcp.mcp_client import MCPClient
 
 logger = logging.getLogger(__name__)
 
-# ExaAI provides information about code through web searches, crawling and code context searches through their platform. Requires no authentication
+# An MCP server exposes tools the agent can call over HTTP. This public example needs no auth.
 EXAMPLE_MCP_ENDPOINT = "https://mcp.exa.ai/mcp"
 
 def get_streamable_http_mcp_client() -> MCPClient:
-    """Returns an MCP Client compatible with Strands"""
-    # to use an MCP server that supports bearer authentication, add headers={"Authorization": f"Bearer {access_token}"}
+    """Connect to an MCP server and expose its tools to a Strands agent."""
+    # For a server that requires auth, pass headers={"Authorization": f"Bearer {access_token}"}.
     return MCPClient(lambda: streamablehttp_client(EXAMPLE_MCP_ENDPOINT))

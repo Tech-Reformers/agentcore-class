@@ -1,12 +1,8 @@
-# Lab (Module 8) — Strands Swarm (Multi-Agent Orchestration)
+# Strands Swarm (Multi-Agent Orchestration)
 
-Swarm = multiple specialized Strands agents in **one process** that hand off to each other based on the task. Not AgentCore-hosted, not A2A. Pure Strands orchestration primitive.
+## Setup
 
-Different from A2A: A2A is a *wire protocol* between separate services. Swarm is an *in-process* coordination pattern.
-
-## Save the script
-
-Save as `swarm_demo.py` anywhere in the workspace:
+Save as `swarm_demo.py`:
 
 ```python
 import logging
@@ -44,13 +40,13 @@ print(f"\nStatus: {result.status}")
 print(f"Node history: {[node.node_id for node in result.node_history]}")
 ```
 
-## Run it
+## Run Demo
 
 **Mac:**
 ```bash
 export AWS_PROFILE=jkdemo
 source /Users/johnkrull/Projects/agentcore-samples/agentcore-samples/.venv/bin/activate
-python swarm_demo.py
+python3 swarm_demo.py
 ```
 
 **Windows (Git Bash):**
@@ -60,35 +56,6 @@ source /d/Projects/agentcore-class/agentcore-samples/.venv/Scripts/activate
 python swarm_demo.py
 ```
 
-Runs for 30 sec to a few minutes depending on how many handoffs the agents decide they need.
+Takes 30 sec - few minutes. Watch debug logs showing agent handoffs in real time.
 
-## Point at in the code
-
-Four things:
-
-1. **`from strands.multiagent import Swarm`** — the orchestration primitive
-2. **Four named `Agent(...)` instances** — each with a different `system_prompt` defining its specialty
-3. **`Swarm([...], entry_point=..., max_handoffs=..., repetitive_handoff_detection_window=...)`** — the swarm config; agents decide when to hand off, safeguards prevent loops
-4. **`swarm(task)` returns a `result` with `status` + `node_history`** — the sequence of agents that participated
-
-Say: "You didn't tell them who goes next. Each agent decides — based on its system prompt and the task state — whether to hand off, and to whom. The framework prevents infinite loops with `repetitive_handoff_detection_window`."
-
-## Point at in the console
-
-- **Debug logs** — `strands.multiagent` handoff decisions in real time. Show them the agent-to-agent transitions.
-- **Final output** — the last agent's response
-- **`Node history`** at the end — the actual sequence, e.g. `['researcher', 'architect', 'coder', 'reviewer']`
-
-That handoff sequence *is* the interesting artifact. Compare across runs — with the same task, agents may pick different paths.
-
-## Cleanup
-
-None. Nothing deployed, no AWS resources beyond the Bedrock calls that already happened.
-
-## Where this fits in the multi-agent story
-
-- **Swarm** — many agents, one process, one shared context
-- **A2A** — many agents, separate services, wire protocol between them
-- **AgentCore Gateway** — many *tools* served through one MCP endpoint (not multi-agent, but adjacent)
-
-Different problems, different primitives. Swarm is the fastest to demo because there's no infrastructure to stand up.
+**Summary**: Swarm orchestrates multiple specialized agents in one process. Agents decide when to hand off based on task state. Different from A2A (separate services) — this is in-process coordination.

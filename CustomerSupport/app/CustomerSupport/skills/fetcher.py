@@ -1,10 +1,7 @@
-"""Skill fetcher — downloads s3/git skills to local filesystem on first use.
+"""Downloads agent "skills" from S3 or git and caches them on local disk.
 
-Resolved paths are passed to AgentSkills(skills=...) in main.py.
-Cache directory: <tmpdir>/.agents/skills/ — an absolute path under the system temp
-directory (honors $TMPDIR, defaults to /tmp). The runtime working directory (e.g.
-/var/task in a CodeZip runtime) is read-only, so the cache must live somewhere
-guaranteed-writable.
+Support plumbing rather than a core lesson: it caches under the system temp dir because the
+runtime's working directory is read-only. Resolved paths are handed to AgentSkills in main.py.
 """
 
 import base64
@@ -78,10 +75,7 @@ def _pick_dir_name(type_dir: Path, name: str, source_hash: str) -> str:
 
 def _rename_and_cache_skill(type_dir: Path, temp_dir: Path, source_hash: str, skill_root: Path,
                             source_label: str = "") -> Path:
-    """Validate SKILL.md, rename the temp dir to the skill's declared name, and update the map.
-
-    Raises ValueError if SKILL.md is missing or has invalid frontmatter.
-    """
+    """Validate SKILL.md, rename the temp dir to the skill's declared name, and record it in the cache map."""
     if not (skill_root / "SKILL.md").exists():
         _cleanup(temp_dir)
         hint = f" (source: {source_label})" if source_label else ""
@@ -146,10 +140,7 @@ def _fetch_s3_skill(source: str, s3_client=None) -> Path:
 
 
 def _resolve_credential_arn(credential_arn: str, identity_client) -> str:
-    """Resolve a Token Vault API-key credential ARN to its secret value via AgentCore Identity.
-
-    ARN format: arn:<p>:bedrock-agentcore:<region>:<account>:token-vault/<vault>/apikeycredentialprovider/<name>
-    """
+    """Exchange a Token Vault credential ARN for its actual API key via AgentCore Identity."""
     from bedrock_agentcore.runtime.context import BedrockAgentCoreContext  # noqa: PLC0415
 
     provider_name = credential_arn.rsplit("/", 1)[-1]
@@ -168,11 +159,7 @@ def _resolve_credential_arn(credential_arn: str, identity_client) -> str:
 
 
 def _build_git_auth_env(credential_arn: Optional[str], username: Optional[str], identity_client=None) -> dict:
-    """Build GIT_CONFIG_* env vars for HTTP Basic auth using a Token Vault credential ARN.
-
-    Uses env vars instead of -c args to avoid leaking credentials in /proc/*/cmdline,
-    and so auth propagates to sub-commands (e.g. sparse-checkout triggering a fetch).
-    """
+    """Build git HTTP Basic auth as env vars (safer than CLI args, which can leak the credential)."""
     if not credential_arn or not identity_client:
         return {}
     password = _resolve_credential_arn(credential_arn, identity_client)
@@ -187,10 +174,7 @@ def _build_git_auth_env(credential_arn: Optional[str], username: Optional[str], 
 
 def _fetch_git_skill(url: str, skill_path: str = "", credential_arn: Optional[str] = None,
                      username: Optional[str] = None, identity_client=None) -> Path:
-    """Shallow-clone a git skill repository and return the local skill directory.
-
-    Returns the directory containing SKILL.md (the subdir itself for sparse checkouts).
-    """
+    """Shallow-clone a git skill repo and return the local directory that holds SKILL.md."""
     if skill_path and (os.path.isabs(skill_path) or ".." in Path(skill_path).parts):
         raise ValueError(f"Path traversal detected in skill path: {skill_path}")
 
@@ -231,7 +215,7 @@ def _fetch_git_skill(url: str, skill_path: str = "", credential_arn: Optional[st
         _cleanup(temp_dir)
         raise ValueError(f"Skill path '{skill_path}' not found in repository '{url}'")
 
-    # SKILL.md lives inside the subdir for sparse checkouts.
+    # For a sparse checkout, SKILL.md lives inside the requested subdirectory.
     skill_root = temp_dir / skill_path if skill_path else temp_dir
     label = f"{url}:{skill_path}" if skill_path else url
     final_dir = _rename_and_cache_skill(type_dir, temp_dir, source_hash, skill_root, source_label=label)
@@ -239,11 +223,7 @@ def _fetch_git_skill(url: str, skill_path: str = "", credential_arn: Optional[st
 
 
 def resolve_s3_skills(sources: list, s3_client=None) -> list:
-    """Resolve s3:// skill URIs to local filesystem paths.
-
-    Any fetch failure raises and fails the invocation — a partial skill set
-    would silently run the agent without capabilities the harness declared.
-    """
+    """Turn a list of s3:// skill URIs into local paths; any failure fails the whole invocation."""
     paths = []
     for uri in sources:
         try:
@@ -255,14 +235,7 @@ def resolve_s3_skills(sources: list, s3_client=None) -> list:
 
 
 def resolve_git_skills(sources: list, identity_client=None) -> list:
-    """Resolve git skill dicts to local filesystem paths.
-
-    Each source is a dict with keys: url (required), path (optional),
-    credentialArn (optional), username (optional).
-
-    Any fetch failure raises and fails the invocation — a partial skill set
-    would silently run the agent without capabilities the harness declared.
-    """
+    """Turn git skill entries (dicts with url/path/credentialArn/username) into local paths."""
     paths = []
     for source in sources:
         try:

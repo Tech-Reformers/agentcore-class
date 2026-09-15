@@ -2,17 +2,17 @@ from strands.models.openai_responses import OpenAIResponsesModel
 
 
 class MantleCompatResponsesModel(OpenAIResponsesModel):
-    """Workaround for Bedrock Mantle rejecting output_text in EasyInputMessage content arrays.
+    """Compatibility shim: flattens assistant message content to a plain string.
 
-    Mantle's Pydantic validation only accepts content as a plain string for assistant messages, while
-    real OpenAI accepts both formats. Flatten assistant content arrays to strings so multi-turn works.
-    Used for open-source OpenAI models (gpt-oss-*) on the /v1 Mantle path; proprietary models use the
-    plain OpenAIResponsesModel on /openai/v1.
+    Needed because the Bedrock Mantle endpoint (used for gpt-oss-* models) accepts only string
+    content, while stock OpenAI also accepts arrays. Not a core lesson concept, just a fix that
+    keeps multi-turn conversations working with those models.
     """
 
     @classmethod
     def _format_request_messages(cls, messages):
         formatted = super()._format_request_messages(messages)
+        # Collapse each assistant message's content array into a single string.
         for msg in formatted:
             if msg.get("role") == "assistant" and isinstance(msg.get("content"), list):
                 msg["content"] = "".join(

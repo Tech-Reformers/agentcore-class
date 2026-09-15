@@ -3,10 +3,11 @@ from strands.handlers.callback_handler import null_callback_handler
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 from model.load import load_model
 
+# BedrockAgentCoreApp wraps our agent so it can run on AgentCore Runtime.
 app = BedrockAgentCoreApp()
 log = app.logger
 
-# --- Product & Policy Data ---
+# Sample data stands in for a real database so the demo runs without external services.
 
 RETURN_POLICIES = {
     "electronics": {
@@ -40,18 +41,12 @@ PRODUCTS = {
 }
 
 
-# --- Tools ---
+# The @tool decorator turns a plain function into a capability the agent can call.
+# The docstring matters: the model reads it to decide when and how to use the tool.
 
 @tool
 def get_return_policy(product_category: str) -> str:
-    """Get return policy information for a specific product category.
-
-    Args:
-        product_category: Product category (e.g., 'electronics', 'accessories', 'audio')
-
-    Returns:
-        Formatted return policy details including timeframes and conditions
-    """
+    """Look up the return policy for a product category (electronics, accessories, audio)."""
     category = product_category.lower()
     if category in RETURN_POLICIES:
         policy = RETURN_POLICIES[category]
@@ -62,21 +57,14 @@ def get_return_policy(product_category: str) -> str:
 
 @tool
 def get_product_info(query: str) -> str:
-    """Search for product information by name, ID, or keyword.
-
-    Args:
-        query: Product name, ID (e.g., 'PROD-001'), or search keyword
-
-    Returns:
-        Product details including name, price, category, and description
-    """
+    """Find product details by name, ID (e.g. 'PROD-001'), or keyword."""
     query_lower = query.lower()
-    # Search by product ID
+    # Exact match on product ID takes priority over a keyword search.
     if query.upper() in PRODUCTS:
         p = PRODUCTS[query.upper()]
         return (f"{p['name']} ({query.upper()}): ${p['price']}, Category: {p['category']}, "
                 f"{p['description']}, Warranty: {p['warranty_months']} months")
-    # Search by keyword
+    # Otherwise match the keyword against name, description, or category.
     results = [
         f"{pid}: {p['name']} - ${p['price']} - {p['description']}"
         for pid, p in PRODUCTS.items()
@@ -88,8 +76,7 @@ def get_product_info(query: str) -> str:
     return f"No products found matching '{query}'."
 
 
-# --- Agent Setup ---
-
+# The system prompt sets the agent's role, tone, and rules for using its tools.
 SYSTEM_PROMPT = """You are a helpful and professional customer support assistant for an e-commerce company.
 
 Your role is to:
@@ -106,6 +93,7 @@ Always use the appropriate tool rather than guessing."""
 _agent = None
 
 def get_or_create_agent():
+    # Build the agent once and reuse it, so warm invocations skip setup cost.
     global _agent
     if _agent is None:
         _agent = Agent(
@@ -117,10 +105,12 @@ def get_or_create_agent():
     return _agent
 
 
+# @app.entrypoint marks the function AgentCore calls for each request.
 @app.entrypoint
 async def invoke(payload, context):
     log.info("Invoking Agent...")
     agent = get_or_create_agent()
+    # Stream the response so text reaches the caller token by token instead of all at once.
     stream = agent.stream_async(payload.get("prompt"))
     async for event in stream:
         if "data" in event and isinstance(event["data"], str):
@@ -128,4 +118,5 @@ async def invoke(payload, context):
 
 
 if __name__ == "__main__":
+    # Starts the local server; AgentCore Runtime provides this in production.
     app.run()

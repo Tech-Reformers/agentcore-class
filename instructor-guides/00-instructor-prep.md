@@ -27,7 +27,7 @@ Verify: `(.venv)` shows in prompt and `get-caller-identity` prints your account.
 cd /Users/johnkrull/Projects/agentcore-samples/agentcore-samples
 python3 -m venv .venv
 source .venv/bin/activate
-find 01-features -maxdepth 4 -name requirements.txt -exec pip install -r {} \;
+find 01-features -maxdepth 5 -name requirements.txt -exec pip install -r {} \;
 pip uninstall -y bedrock-agentcore-starter-toolkit
 ```
 
@@ -36,7 +36,7 @@ pip uninstall -y bedrock-agentcore-starter-toolkit
 cd /d/Projects/agentcore-class/agentcore-samples
 python -m venv .venv
 source .venv/Scripts/activate
-find 01-features -maxdepth 4 -name requirements.txt -exec pip install -r {} \;
+find 01-features -maxdepth 5 -name requirements.txt -exec pip install -r {} \;
 pip uninstall -y bedrock-agentcore-starter-toolkit
 ```
 

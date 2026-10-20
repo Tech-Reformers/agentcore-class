@@ -41,3 +41,7 @@ cdk.context.json
 dist/
 build/
 *.egg-info/
+
+# Logs and backups
+*.log
+*.bak
